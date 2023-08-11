@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 
 	"github.com/kinghrothgar/chrome-cookie-decrypt/internal/cookies"
@@ -15,11 +16,17 @@ import (
 )
 
 var (
-	cookiesPath = "/Users/lukejolly/Library/Application Support/Google/Chrome/Default/Cookies"
-	selectRegex string
+	cookiesPathSuffix = "Library/Application Support/Google/Chrome/Default/Cookies"
+	selectRegex       string
 )
 
 func main() {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		log.WithError(err).Fatal("failed to get user home directory")
+	}
+	cookiesPath := filepath.Join(home, cookiesPathSuffix)
+
 	flag.StringVar(&selectRegex, "regex", ".*", "a regex to match cookie host key (domain) against")
 	flag.Parse()
 
