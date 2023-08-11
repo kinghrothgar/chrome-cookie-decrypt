@@ -34,14 +34,19 @@ type ChromeCookie struct {
 }
 
 func (c *ChromeCookie) NetscapeCookie() *NetscapeCookie {
+	expires := 0
+	if c.HasExpires == 1 {
+		expires = (c.ExpiresUTC / 1000000) - 11644473600
+	}
 	return &NetscapeCookie{
 		Domain:            c.HostKey,
 		IncludeSubdomains: capBool(strings.HasPrefix(c.HostKey, ".")),
 		Path:              c.Path,
 		IsSecure:          c.IsSecure == 1,
-		ExpiresUTC:        c.ExpiresUTC,
+		ExpiresUTC:        expires,
 		Name:              c.Name,
 		Value:             c.Value,
+		IsHttponly:        c.IsHttponly,
 	}
 }
 
@@ -98,6 +103,7 @@ type NetscapeCookie struct {
 	ExpiresUTC        int
 	Name              string
 	Value             string
+	IsHttponly        int
 }
 
 type capBool bool
@@ -106,6 +112,11 @@ func (c capBool) String() string {
 	return strings.ToUpper(fmt.Sprintf("%t", c))
 }
 
+// String outputs cookie this format https://curl.se/docs/http-cookies.html
 func (n *NetscapeCookie) String() string {
-	return fmt.Sprintf("%s\t%s\t%s\t%s\t%d\t%s\t%s", n.Domain, n.IncludeSubdomains.String(), n.Path, n.IsSecure.String(), n.ExpiresUTC, n.Name, n.Value)
+	s := fmt.Sprintf("%s\t%s\t%s\t%s\t%d\t%s\t%s", n.Domain, n.IncludeSubdomains.String(), n.Path, n.IsSecure.String(), n.ExpiresUTC, n.Name, n.Value)
+	if n.IsHttponly == 1 {
+		return "#HttpOnly_" + s
+	}
+	return s
 }

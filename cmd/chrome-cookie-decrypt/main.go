@@ -61,6 +61,7 @@ func main() {
 		}
 		netscapeCookies = append(netscapeCookies, c.NetscapeCookie())
 	}
+	fmt.Println("# Netscape HTTP Cookie File")
 	for _, c := range netscapeCookies {
 		fmt.Println(c.String())
 	}
