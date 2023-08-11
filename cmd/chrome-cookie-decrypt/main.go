@@ -1,17 +1,15 @@
 package main
 
 import (
-	"database/sql"
 	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"regexp"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/kinghrothgar/chrome-cookie-decrypt/internal/cookies"
+	"github.com/kinghrothgar/chrome-cookie-decrypt/internal/database"
 	"github.com/kinghrothgar/chrome-cookie-decrypt/internal/keychain"
-	"github.com/mattn/go-sqlite3"
 	_ "github.com/mattn/go-sqlite3"
 	log "github.com/sirupsen/logrus"
 )
@@ -38,11 +36,11 @@ func main() {
 		log.WithError(err).Fatal("failed to get encryption key")
 	}
 
-	db, err := initDB(cookiesPath)
+	db, err := database.InitDB(cookiesPath)
 	if err != nil {
 		log.WithError(err).Fatal("failed to open cookies sqlite DB")
 	}
-	defer db.Close() // Defer Closing the database
+	defer db.Close()
 
 	chromeCookies := []*cookies.ChromeCookie{}
 	query, err := db.Preparex("SELECT * FROM cookies WHERE host_key REGEXP $1")
@@ -66,18 +64,4 @@ func main() {
 	for _, c := range netscapeCookies {
 		fmt.Println(c.String())
 	}
-}
-
-func initDB(dbPath string) (*sqlx.DB, error) {
-	sql.Register("sqlite3_with_regex",
-		&sqlite3.SQLiteDriver{
-			ConnectHook: func(conn *sqlite3.SQLiteConn) error {
-				return conn.RegisterFunc("regexp", regex, true)
-			},
-		})
-	return sqlx.Open("sqlite3_with_regex", dbPath)
-}
-
-func regex(re, s string) (bool, error) {
-	return regexp.MatchString(re, s)
 }
