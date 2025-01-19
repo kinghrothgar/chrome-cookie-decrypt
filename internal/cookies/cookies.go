@@ -12,25 +12,26 @@ import (
 )
 
 type ChromeCookie struct {
-	CreationUTC     int    `db:"creation_utc"`
-	HostKey         string `db:"host_key"`
-	TopFrameSiteKey string `db:"top_frame_site_key"`
-	Name            string `db:"name"`
-	Value           string `db:"value"`
-	EncryptedValue  []byte `db:"encrypted_value"`
-	Path            string `db:"path"`
-	ExpiresUTC      int    `db:"expires_utc"`
-	IsSecure        int    `db:"is_secure"`
-	IsHttponly      int    `db:"is_httponly"`
-	LastAccessUTC   int    `db:"last_access_utc"`
-	HasExpires      int    `db:"has_expires"`
-	IsPersistent    int    `db:"is_persistent"`
-	Priority        int    `db:"priority"`
-	Samesite        int    `db:"samesite"`
-	SourceScheme    int    `db:"source_scheme"`
-	SourcePort      int    `db:"source_port"`
-	IsSameParty     int    `db:"is_same_party"`
-	LastUpdateUTC   int    `db:"last_update_utc"`
+	CreationUTC          int    `db:"creation_utc"`
+	EncryptedValue       []byte `db:"encrypted_value"`
+	ExpiresUTC           int    `db:"expires_utc"`
+	HasCrossSiteAncestor int    `db:"has_cross_site_ancestor"`
+	HasExpires           int    `db:"has_expires"`
+	HostKey              string `db:"host_key"`
+	IsHttponly           int    `db:"is_httponly"`
+	IsPersistent         int    `db:"is_persistent"`
+	IsSecure             int    `db:"is_secure"`
+	LastAccessUTC        int    `db:"last_access_utc"`
+	LastUpdateUTC        int    `db:"last_update_utc"`
+	Name                 string `db:"name"`
+	Path                 string `db:"path"`
+	Priority             int    `db:"priority"`
+	Samesite             int    `db:"samesite"`
+	SourcePort           int    `db:"source_port"`
+	SourceScheme         int    `db:"source_scheme"`
+	SourceType           int    `db:"source_type"`
+	TopFrameSiteKey      string `db:"top_frame_site_key"`
+	Value                string `db:"value"`
 }
 
 func (c *ChromeCookie) NetscapeCookie() *NetscapeCookie {

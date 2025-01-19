@@ -55,7 +55,7 @@ func main() {
 		log.WithError(err).Fatal("failed to prepare select query")
 	}
 	if err := query.Select(&chromeCookies, selectRegex); err != nil {
-		log.WithError(err).Fatal("failed to query cookies sqlite DB")
+		log.WithError(err).Fatal("failed to query cookies sqlite DB, check cookies.ChromeCookie for missing fields")
 	}
 
 	netscapeCookies := []*cookies.NetscapeCookie{}
