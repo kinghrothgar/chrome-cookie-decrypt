@@ -59,6 +59,7 @@ const (
 	aescbcLength          = 16
 )
 
+// Details found here https://gist.github.com/creachadair/937179894a24571ce9860e2475a2d2ec
 func (c *ChromeCookie) Decrypt(password []byte) error {
 	key := pbkdf2.Key(password, []byte(aescbcSalt), aescbcIterationsMacOS, aescbcLength, sha1.New)
 	block, err := aes.NewCipher(key)
@@ -92,7 +93,8 @@ func (c *ChromeCookie) Decrypt(password []byte) error {
 		return fmt.Errorf("invalid last block padding length: %d", paddingLen)
 	}
 
-	c.Value = string(decrypted[:len(decrypted)-paddingLen])
+	// First 32 bytes is the SHA256 of the HostKey
+	c.Value = string(decrypted[32 : len(decrypted)-paddingLen])
 	return nil
 }
 
